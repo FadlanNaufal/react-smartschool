@@ -1,0 +1,66 @@
+import React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import TabItem from './../TabItem';
+import { basicColors } from '../../utils/color';
+
+
+const BottomNav = ({state, descriptors, navigation}) => {
+    return (
+        <View style={styles.container}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+            ? options.title
+            : route.name;
+
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        return (
+
+          <TabItem 
+            type={label} 
+            title={label} 
+            active={isFocused} 
+            onPress={onPress} 
+            onLongPress={onLongPress} 
+            key={index} />
+        );
+      })}
+    </View>
+    )
+}
+
+export default BottomNav
+
+
+const styles = StyleSheet.create({
+  container : {
+    flexDirection : 'row',
+    justifyContent : 'space-between',
+    paddingHorizontal : 53,
+    paddingVertical : 12,
+    backgroundColor : basicColors.bottomNav
+  }
+})
